@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    environment {
+        KUBECONFIG = '/.kube/config'
+    }
+    stages {
+        stage('Deploy Kubernetes') {
+            steps {
+                script {
+                    try {
+                        dir('kubernetes') {
+                            withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'kubecred', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                                // sh 'minikube kubectl -- apply -f dp-test-namespace.yml'
+                                sh 'minikube kubectl -- apply -f .'
+                                sh 'minikube kubectl -- get all -n dp-test'
+                            }
+                        }
+                    } catch (Exception e) {
+                        echo "[Error] ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+}

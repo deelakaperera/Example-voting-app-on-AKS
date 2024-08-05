@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: result-service
+  namespace: dp-test
+  labels: 
+    name: result-service
+    app: voting-demo
+spec:
+  type: ClusterIp
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector:
+    name: voting-be-pod
+    app: voting-demo
+

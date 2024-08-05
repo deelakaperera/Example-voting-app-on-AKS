@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    stages {
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    try {
+                        dir('kubernetes') {
+                            withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'akskubecred', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                                sh 'kubectl apply -f .'
+                                sh 'kubectl get all -n dp-test'
+                            }
+                        }
+                    } catch (Exception e) {
+                        echo "[Error] [DeployK8] ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+}

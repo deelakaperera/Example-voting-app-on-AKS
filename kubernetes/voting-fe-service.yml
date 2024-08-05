@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-fe-service
+  namespace: dp-test
+  labels: 
+    name: voting-fe-service
+    app: voting-demo
+spec:
+  type: ClusterIp
+  ports: 
+    - port: 80
+      targetPort: 80
+  selector:
+    name: voting-fe-pod
+    app: voting-demo
+

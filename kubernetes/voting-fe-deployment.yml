@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-fe-deployment
+  namespace: dp-test
+  labels:
+    name: voting-fe
+    app: voting-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: voting-fe-pod
+      app: voting-demo
+  template:
+    metadata:
+      name: voting-fe-pod
+      labels: 
+        name: voting-fe-pod
+        app: voting-demo
+    spec:
+      containers:
+        - name: voting-fe
+          image: dockersamples/examplevotingapp_vote
+          ports:
+            - containerPort: 80

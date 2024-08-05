@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    environment {
+        AZURE_CREDS = credentials('dc40c02a-c0f3-4818-af27-be7cc5b2b246')
+    }
+    stages {
+        stage('Create Azure kubernetes cluster') {
+            steps{
+                script {
+                    try {
+                        dir('terraform') {
+                            withEnv([
+                                "ARM_CLIENT_ID=${AZURE_CREDS_CLIENT_ID}",
+                                "ARM_CLIENT_SECRET=${AZURE_CREDS_CLIENT_SECRET}",
+                                "ARM_TENANT_ID=${AZURE_CREDS_TENANT_ID}",
+                                "ARM_SUBSCRIPTION_ID=${AZURE_CREDS_SUBSCRIPTION_ID}",
+                            ]) {
+                                    sh 'terraform init'
+                                    sh 'terraform plan --out=/home/deelaka/Documents/temp/outfile.plan'
+                                    sh 'terraform apply "/home/deelaka/Documents/temp/outfile.plan"'
+                            }
+                        }
+                    } catch (Exception e) {
+                        echo "[Error] [DeployAKS] ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+}
